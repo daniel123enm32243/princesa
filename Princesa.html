@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carta Pergamino 3D - Para Ti con Todo Mi Amor 🌹</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Montserrat:wght@300;400;600;700&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: radial-gradient(circle at center, #3b0a24 0%, #17030e 70%, #080105 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0;
+            color: #fff;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .font-handwriting { font-family: 'Dancing Script', cursive; }
+        .font-title { font-family: 'Great Vibes', cursive; }
+        .font-header { font-family: 'Cinzel', serif; }
+
+        .glow-effect { box-shadow: 0 0 30px rgba(225, 29, 72, 0.5); }
+        .glow-gold { box-shadow: 0 0 20px rgba(234, 179, 8, 0.4); }
+
+        /* 3D Perspective Container */
+        .perspective-container { perspective: 1200px; }
+
+        /* Scroll Wrapper */
+        .scroll-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 580px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+            filter: drop-shadow(0 25px 35px rgba(0,0,0,0.8));
+        }
+
+        /* Wooden Rollers */
+        .scroll-roller {
+            height: 32px;
+            width: 106%;
+            margin-left: -3%;
+            background: linear-gradient(180deg, #2d1808 0%, #5c3214 25%, #8a4b1f 50%, #5c3214 75%, #2d1808 100%);
+            border-radius: 16px;
+            box-shadow: inset 0 2px 6px rgba(255,255,255,0.35), inset 0 -3px 6px rgba(0,0,0,0.85), 0 6px 18px rgba(0,0,0,0.6);
+            position: relative;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4px;
+        }
+
+        .scroll-roller::before, .scroll-roller::after {
+            content: '';
+            width: 20px;
+            height: 40px;
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            border-radius: 7px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.7);
+        }
+
+        /* Parchment Paper */
+        .scroll-paper {
+            position: relative;
+            background-color: #f6e7c1;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.45) 0%, rgba(0,0,0,0.06) 100%),
+                radial-gradient(circle at 20% 20%, rgba(139, 69, 19, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(139, 69, 19, 0.18) 0%, transparent 45%),
+                linear-gradient(90deg, rgba(80, 40, 10, 0.28) 0%, transparent 8%, transparent 92%, rgba(80, 40, 10, 0.28) 100%);
+            box-shadow: inset 0 0 50px rgba(112, 66, 20, 0.4);
+            color: #2b180a;
+            overflow: hidden;
+            transform-origin: top center;
+            transition: max-height 2.5s cubic-bezier(0.25, 1, 0.3, 1), opacity 0.6s ease;
+            border-left: 2px solid rgba(120, 70, 20, 0.35);
+            border-right: 2px solid rgba(120, 70, 20, 0.35);
+        }
+
+        .scroll-paper.closed {
+            max-height: 0px;
+            opacity: 0;
+        }
+
+        .scroll-paper.open {
+            max-height: 2200px;
+            opacity: 1;
+        }
+
+        /* Red Ribbon and Bow System */
+        .ribbon-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 40;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.6s ease;
+        }
+
+        .ribbon-wrapper.cut {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1.3);
+            pointer-events: none;
+        }
+
+        .ribbon-band {
+            position: absolute;
+            width: 104%;
+            height: 38px;
+            background: linear-gradient(180deg, #9f1239 0%, #e11d48 40%, #be123c 70%, #881337 100%);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 215, 0, 0.5);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.5);
+        }
+
+        .ribbon-bow {
+            position: relative;
+            z-index: 45;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #f43f5e 0%, #be123c 100%);
+            border-radius: 50%;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulseBow 2s infinite alternate ease-in-out;
+            border: 2px solid #fef08a;
+        }
+
+        @keyframes pulseBow {
+            0% { transform: scale(1); box-shadow: 0 0 15px rgba(244, 63, 94, 0.6); }
+            100% { transform: scale(1.08); box-shadow: 0 0 30px rgba(244, 63, 94, 0.9); }
+        }
+
+        /* Kiss Marks & Particles */
+        .lipstick-mark {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            animation: kissPop 2s forwards ease-out;
+            transform-origin: center center;
+        }
+
+        @keyframes kissPop {
+            0% { transform: scale(0) rotate(-20deg); opacity: 0; filter: drop-shadow(0 0 0px transparent); }
+            20% { transform: scale(1.3) rotate(0deg); opacity: 1; filter: drop-shadow(0 0 15px rgba(225,29,72,0.8)); }
+            80% { opacity: 0.9; transform: scale(1) rotate(5deg); }
+            100% { opacity: 0; transform: scale(0.8) translateY(-40px); }
+        }
+
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 99;
+            animation: floatHeartUp linear forwards;
+        }
+
+        @keyframes floatHeartUp {
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.4) rotate(360deg); opacity: 0; }
+        }
+
+        .petal {
+            position: fixed;
+            pointer-events: none;
+            z-index: 50;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-5vh) rotate(0deg) scale(0.8); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg) scale(1.2); opacity: 0; }
+        }
+
+        .sparkle {
+            position: absolute;
+            pointer-events: none;
+            background: radial-gradient(circle, #fff 10%, rgba(255,215,0,0.9) 50%, transparent 80%);
+            border-radius: 50%;
+            animation: sparkleAnim 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes sparkleAnim {
+            0% { transform: scale(0.2); opacity: 0.2; }
+            100% { transform: scale(1.3); opacity: 1; }
+        }
+
+        .bear-overlay {
+            backdrop-filter: blur(12px);
+            background: rgba(15, 3, 10, 0.82);
+        }
+
+        @keyframes floatBear {
+            0%, 100% { transform: translateY(0px) rotate(-2deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        .animate-bear { animation: floatBear 3.5s ease-in-out infinite; }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 select-none relative">
+
+    <!-- Ambient Sparkles Container -->
+    <div id="ambient-sparkles" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- Kiss Screen Overlay Container -->
+    <div id="kiss-layer" class="fixed inset-0 pointer-events-none z-50"></div>
+
+    <!-- Kiss Counter Badge -->
+    <div id="kiss-counter-badge" class="fixed top-4 right-4 z-40 bg-rose-950/80 border border-rose-500/40 text-rose-200 px-4 py-2 rounded-full text-sm sm:text-base font-bold shadow-lg backdrop-blur-md flex items-center gap-2 transition-all duration-300 opacity-0 transform translate-y--4">
+        <span>💋 Besos enviados:</span>
+        <span id="kiss-count" class="text-xl text-rose-400 font-extrabold">0</span>
+    </div>
+
+    <!-- MAIN INTERACTIVE CONTAINER -->
+    <main class="z-10 w-full max-w-2xl flex flex-col items-center text-center">
+
+        <!-- Intro Greeting & Dynamic Question -->
+        <header id="intro-container" class="mb-8 transition-all duration-700 transform">
+            <span class="inline-block px-4 py-1.5 bg-rose-950/60 border border-rose-500/30 text-rose-300 rounded-full text-xs sm:text-sm font-semibold tracking-wider uppercase mb-4 shadow-sm">
+                Mensaje Especial de Buenos Días
+            </span>
+            <h1 class="text-3xl sm:text-5xl font-header font-bold text-rose-100 tracking-wide drop-shadow-lg mb-3">
+                ¿Cómo amaneciste hoy, princesa? 💗
+            </h1>
+            <p id="dynamic-phrase" class="text-rose-300/90 text-lg sm:text-xl font-handwriting h-8 transition-opacity duration-500">
+                Tengo un pergamino lleno de amor esperando por ti... ✨
+            </p>
+        </header>
+
+        <!-- Initial Action Buttons ("Bien 🌹" & "Mal 🧸") -->
+        <div id="buttons-container" class="flex flex-wrap justify-center gap-6 mb-8 transition-all duration-500">
+            <button id="btn-bien" class="group relative px-8 py-4 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-semibold text-lg sm:text-xl rounded-full shadow-lg hover:shadow-rose-500/50 transform hover:-translate-y-1 active:translate-y-0 transition-all duration-300 flex items-center gap-2 glow-effect">
+                <span>Bien 🌹</span>
+                <span class="inline-block transition-transform duration-300 group-hover:scale-125">✨</span>
+            </button>
+
+            <button id="btn-mal" class="px-8 py-4 bg-slate-900/80 hover:bg-slate-800/90 text-rose-200/90 font-medium text-lg sm:text-xl rounded-full border border-rose-900/50 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2 backdrop-blur-sm">
+                <span>Mal 🧸</span>
+            </button>
+        </div>
+
+        <!-- 3D PARCHMENT SCROLL SECTION (Hidden initially) -->
+        <div id="scroll-section" class="perspective-container w-full hidden">
+
+            <!-- Instruction Hint before cutting ribbon -->
+            <div id="ribbon-hint" class="mb-6 animate-bounce text-rose-200 font-handwriting text-2xl sm:text-3xl drop-shadow-md">
+                ✂️ ¡Haz clic en el moño rojo para cortar la cinta y abrir tu carta! 💌
+            </div>
+
+            <div class="scroll-wrapper">
+                
+                <!-- Wooden Top Roller -->
+                <div class="scroll-roller" id="top-roller"></div>
+
+                <!-- Ribbon System overlaying the rolled parchment -->
+                <div id="ribbon-system" class="ribbon-wrapper">
+                    <div class="ribbon-band"></div>
+                    <div class="ribbon-bow">
+                        <span class="text-3xl">🎀</span>
+                    </div>
+                </div>
+
+                <!-- Parchment Body -->
+                <div id="scroll-paper" class="scroll-paper closed px-6 sm:px-12 py-8 sm:py-12 text-left relative">
+                    <div class="absolute top-0 left-0 right-0 h-12 bg-gradient-to-b from-amber-950/20 to-transparent pointer-events-none"></div>
+                    
+                    <!-- Calligraphic Content -->
+                    <div class="relative z-10 space-y-6">
+                        
+                        <div class="text-center border-b border-amber-900/20 pb-4">
+                            <span class="text-amber-900/70 font-header text-xs sm:text-sm tracking-widest uppercase block mb-1">Escrito con amor eterno</span>
+                            <h2 class="font-title text-4xl sm:text-6xl text-amber-950 font-bold">Buenos días, mi princesa 💖</h2>
+                        </div>
+
+                        <div class="font-handwriting text-2xl sm:text-3xl text-amber-950 leading-relaxed space-y-5">
+                            <p>
+                                Si estás leyendo este pergamino, quiero que sepas que eres lo primero en lo que pienso al despertar y la razón principal por la que mi día se llena de luz y felicidad.
+                            </p>
+                            <p>
+                                No existe distancia ni tiempo que apague todo lo que siento por ti. Eres mi refugio seguro, mi sonrisa favorita y la mujer más maravillosa de este mundo.
+                            </p>
+                            <p>
+                                Hoy deseo que tu día esté repleto de momentos hermosos, paz y muchísima alegría. Recuerda siempre lo valiosa e increíble que eres.
+                            </p>
+                            <p class="text-right pt-4 font-bold">
+                                Con todo mi amor indestructible y mil besitos,<br>
+                                <span class="font-title text-3xl sm:text-5xl text-rose-900">Tu rey que te ama infinitamente ❤️</span>
+                            </p>
+                        </div>
+
+                        <!-- Action Buttons inside Parchment -->
+                        <div class="flex flex-wrap justify-center gap-4 pt-8 border-t border-amber-900/20">
+                            <button id="btn-kiss-letter" class="px-6 py-3 bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-bold text-lg rounded-full shadow-md hover:shadow-rose-600/40 transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2">
+                                <span>Mándame un beso 💋</span>
+                            </button>
+                            <button id="btn-love-letter" class="px-6 py-3 bg-amber-900/80 hover:bg-amber-900 text-amber-100 font-bold text-lg rounded-full shadow-md transform hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2">
+                                <span>Te amo 💖</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <div class="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-amber-950/20 to-transparent pointer-events-none"></div>
+                </div>
+
+                <!-- Wooden Bottom Roller -->
+                <div class="scroll-roller" id="bottom-roller"></div>
+
+            </div>
+
+            <!-- Replay Option -->
+            <div class="mt-8 flex justify-center gap-4">
+                <button id="btn-replay" class="px-6 py-2.5 bg-rose-950/70 hover:bg-rose-900 text-rose-200 text-sm font-semibold rounded-full border border-rose-700/40 transition-all duration-300 shadow-md">
+                    ↺ Enrollar pergamino
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- COMFORT MODAL FOR "MAL 🧸" -->
+    <div id="bear-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bear-overlay opacity-0 pointer-events-none transition-opacity duration-500">
+        <div class="bg-slate-900/95 border border-pink-500/40 rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center shadow-2xl transform scale-90 transition-transform duration-500 relative" id="bear-card">
+            
+            <!-- Cuddle Teddy SVG -->
+            <div class="animate-bear inline-block my-2">
+                <svg class="w-32 h-32 mx-auto drop-shadow-xl" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="25" fill="#8B5E3C"/>
+                    <circle cx="50" cy="50" r="14" fill="#D2B48C"/>
+                    <circle cx="150" cy="50" r="25" fill="#8B5E3C"/>
+                    <circle cx="150" cy="50" r="14" fill="#D2B48C"/>
+                    <circle cx="100" cy="95" r="55" fill="#A0522D"/>
+                    <ellipse cx="100" cy="110" rx="22" ry="16" fill="#D2B48C"/>
+                    <ellipse cx="100" cy="103" rx="8" ry="6" fill="#3A1E05"/>
+                    <circle cx="80" cy="85" r="6" fill="#1A0C03"/>
+                    <circle cx="120" cy="85" r="6" fill="#1A0C03"/>
+                    <circle cx="82" cy="83" r="2" fill="#FFFFFF"/>
+                    <circle cx="122" cy="83" r="2" fill="#FFFFFF"/>
+                    <path d="M128 92 C128 92, 132 98, 128 102 C124 102, 124 98, 128 92" fill="#70D6FF"/>
+                    <path d="M72 73 Q80 78 88 75" stroke="#3A1E05" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M128 75 Q136 78 144 73" stroke="#3A1E05" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M60 140 C60 120, 140 120, 140 140 C140 175, 60 175, 60 140 Z" fill="#8B5E3C"/>
+                    <path d="M100 150 L91 141 C82 133 82 122 91 116 C95 112 100 114 100 114 C100 114 105 112 109 116 C118 122 118 133 109 141 L100 150 Z" fill="#E11D48"/>
+                </svg>
+            </div>
+
+            <h3 class="text-2xl font-bold text-rose-300 font-handwriting mb-2">¡Un abracito de osito para ti! 🧸</h3>
+            <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                Déjame darte un abrazo virtual gigante y llenarte de besitos para que tu día mejore inmediatamente. ¡Te amo con todo mi corazón! 💖
+            </p>
+
+            <div class="space-y-3">
+                <button id="btn-kiss-modal" class="w-full py-3.5 bg-gradient-to-r from-rose-600 to-pink-600 text-white font-bold rounded-full shadow-lg hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 glow-effect">
+                    <span>Mándame un beso 💋</span>
+                </button>
+                <button id="btn-open-letter-from-modal" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-rose-200 font-semibold rounded-full border border-rose-800/40 active:scale-95 transition-all">
+                    Ver mi carta de amor 🌹
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO SYNTHESIZER & SCRIPT LOGIC -->
+    <script>
+        // Web Audio API Synthesizer for Kiss & Pop Sound Effects
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playKissSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.08);
+                osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.15);
+
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } catch (e) {
+                console.log("Audio not supported or blocked");
+            }
+        }
+
+        // Ambient Sparkle Generator
+        const sparklesContainer = document.getElementById('ambient-sparkles');
+        for (let i = 0; i < 30; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            const size = Math.random() * 4 + 2;
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            sparkle.style.left = `${Math.random() * 100}%`;
+            sparkle.style.top = `${Math.random() * 100}%`;
+            sparkle.style.animationDelay = `${Math.random() * 3}s`;
+            sparklesContainer.appendChild(sparkle);
+        }
+
+        // Kiss Counter Logic
+        let kissCount = 0;
+        const kissCounterBadge = document.getElementById('kiss-counter-badge');
+        const kissCountEl = document.getElementById('kiss-count');
+
+        function incrementKissCount(amount = 1) {
+            kissCount += amount;
+            kissCountEl.textContent = kissCount;
+            kissCounterBadge.classList.remove('opacity-0', 'translate-y--4');
+            kissCounterBadge.classList.add('opacity-100', 'translate-y-0');
+        }
+
+        // Rose Petals System
+        function triggerPetalRain() {
+            const petalColors = ['#e11d48', '#f43f5e', '#fb7185', '#fda4af', '#9f1239'];
+            for (let i = 0; i < 35; i++) {
+                setTimeout(() => {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    const color = petalColors[Math.floor(Math.random() * petalColors.length)];
+                    const size = Math.random() * 16 + 14;
+                    
+                    petal.innerHTML = `
+                        <svg width="${size}" height="${size}" viewBox="0 0 30 30" fill="${color}">
+                            <path d="M15 0 C25 10, 30 20, 15 30 C0 20, 5 10, 15 0 Z" opacity="0.85"/>
+                        </svg>
+                    `;
+                    petal.style.left = `${Math.random() * 100}vw`;
+                    petal.style.animationDuration = `${Math.random() * 3 + 4}s`;
+                    document.body.appendChild(petal);
+
+                    setTimeout(() => petal.remove(), 7000);
+                }, i * 100);
+            }
+        }
+
+        // SPECTACULAR KISS & LIPSTICK EXPLOSION SYSTEM
+        function triggerKissExplosion(originX, originY) {
+            playKissSound();
+            incrementKissCount(5);
+
+            const kissLayer = document.getElementById('kiss-layer');
+            const items = ['💋', '💖', '✨', '💋', '🦋', '💗', '💋'];
+
+            // 1. Spawn Lipstick Mark directly on target point
+            const mark = document.createElement('div');
+            mark.className = 'lipstick-mark text-4xl sm:text-6xl';
+            mark.innerHTML = '💋';
+            mark.style.left = `${(originX || window.innerWidth / 2) - 25}px`;
+            mark.style.top = `${(originY || window.innerHeight / 2) - 25}px`;
+            kissLayer.appendChild(mark);
+            setTimeout(() => mark.remove(), 2000);
+
+            // 2. Burst of Floating Particles
+            for (let i = 0; i < 22; i++) {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.className = 'floating-heart text-2xl sm:text-4xl';
+                    p.innerHTML = items[Math.floor(Math.random() * items.length)];
+
+                    const x = originX ? (originX + (Math.random() - 0.5) * 200) : (Math.random() * window.innerWidth);
+                    const y = originY ? (originY + (Math.random() - 0.5) * 100) : (window.innerHeight - 100);
+
+                    p.style.left = `${Math.max(10, Math.min(window.innerWidth - 40, x))}px`;
+                    p.style.top = `${y}px`;
+                    p.style.animationDuration = `${Math.random() * 2 + 2.5}s`;
+
+                    kissLayer.appendChild(p);
+                    setTimeout(() => p.remove(), 4500);
+                }, i * 60);
+            }
+        }
+
+        // DOM Elements
+        const btnBien = document.getElementById('btn-bien');
+        const btnMal = document.getElementById('btn-mal');
+        const introContainer = document.getElementById('intro-container');
+        const buttonsContainer = document.getElementById('buttons-container');
+        const scrollSection = document.getElementById('scroll-section');
+        const scrollPaper = document.getElementById('scroll-paper');
+        const ribbonSystem = document.getElementById('ribbon-system');
+        const ribbonHint = document.getElementById('ribbon-hint');
+        const btnReplay = document.getElementById('btn-replay');
+
+        const bearModal = document.getElementById('bear-modal');
+        const bearCard = document.getElementById('bear-card');
+        const btnKissModal = document.getElementById('btn-kiss-modal');
+        const btnOpenLetterFromModal = document.getElementById('btn-open-letter-from-modal');
+
+        const btnKissLetter = document.getElementById('btn-kiss-letter');
+        const btnLoveLetter = document.getElementById('btn-love-letter');
+
+        // Ribbon Cutting Logic
+        let isRibbonCut = false;
+
+        function cutRibbonAndUnroll() {
+            if (isRibbonCut) return;
+            isRibbonCut = true;
+
+            playKissSound();
+            ribbonSystem.classList.add('cut');
+            ribbonHint.classList.add('opacity-0');
+
+            setTimeout(() => {
+                ribbonHint.style.display = 'none';
+                scrollPaper.classList.remove('closed');
+                scrollPaper.classList.add('open');
+                triggerPetalRain();
+            }, 400);
+        }
+
+        ribbonSystem.addEventListener('click', cutRibbonAndUnroll);
+
+        // "Bien 🌹" Flow
+        btnBien.addEventListener('click', () => {
+            introContainer.classList.add('opacity-0', '-translate-y-4');
+            buttonsContainer.classList.add('opacity-0', 'scale-90');
+
+            setTimeout(() => {
+                introContainer.classList.add('hidden');
+                buttonsContainer.classList.add('hidden');
+                scrollSection.classList.remove('hidden');
+            }, 500);
+        });
+
+        // "Mal 🧸" Flow
+        btnMal.addEventListener('click', () => {
+            bearModal.classList.remove('pointer-events-none', 'opacity-0');
+            bearModal.classList.add('opacity-100');
+            bearCard.classList.remove('scale-90');
+            bearCard.classList.add('scale-100');
+        });
+
+        // Kiss Button in Teddy Modal
+        btnKissModal.addEventListener('click', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            triggerKissExplosion(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        });
+
+        // Open Letter from Teddy Modal
+        btnOpenLetterFromModal.addEventListener('click', () => {
+            bearModal.classList.remove('opacity-100');
+            bearModal.classList.add('opacity-0', 'pointer-events-none');
+            bearCard.classList.remove('scale-100');
+            bearCard.classList.add('scale-90');
+
+            introContainer.classList.add('hidden');
+            buttonsContainer.classList.add('hidden');
+            scrollSection.classList.remove('hidden');
+        });
+
+        // Kiss Button Inside Letter
+        btnKissLetter.addEventListener('click', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            triggerKissExplosion(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        });
+
+        // "Te amo" Button Inside Letter
+        btnLoveLetter.addEventListener('click', (e) => {
+            const rect = e.target.getBoundingClientRect();
+            triggerKissExplosion(rect.left + rect.width / 2, rect.top + rect.height / 2);
+            triggerPetalRain();
+        });
+
+        // Re-roll Scroll Action
+        btnReplay.addEventListener('click', () => {
+            scrollPaper.classList.remove('open');
+            scrollPaper.classList.add('closed');
+            ribbonSystem.classList.remove('cut');
+            ribbonHint.style.display = 'block';
+            ribbonHint.classList.remove('opacity-0');
+            isRibbonCut = false;
+        });
+
+        // Allow tapping anywhere on screen when kiss mode is active to leave lipstick marks
+        document.addEventListener('click', (e) => {
+            // Check if clicking interactive buttons to prevent duplicate triggers
+            if (e.target.closest('button') || e.target.closest('#ribbon-system')) return;
+            if (kissCount > 0) {
+                triggerKissExplosion(e.clientX, e.clientY);
+            }
+        });
+    </script>
+</body>
+</html>
